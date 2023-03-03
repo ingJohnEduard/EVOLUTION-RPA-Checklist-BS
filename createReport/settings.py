@@ -1,37 +1,32 @@
-import configparser
+from dotenv import load_dotenv
 from os.path import join, exists
 from os import mkdir
+import os
 from shutil import copy
 import datetime as dt
 import logging
 
-# Se cargan parametros de configuración desde el archivo config.cfg
-config = configparser.ConfigParser()
-config.read(['config.cfg', 'config.dev.cfg'])
-# Se cargan parámetros generales
-path_settings = config['path']
-ROOT_PATH = path_settings.get('PATH_CREATE_REPORT')
-# Se cargan parámetros relacionados a la base de datos
-db_settings = config['dataBase']
-SERVER_NAME = db_settings['SERVER_NAME']
-DB_NAME = db_settings['DB_NAME']
-DB_USER = db_settings['USER']
-DB_PASSWORD = db_settings['PASSWORD']
-TABLE_NAME = db_settings['TABLE_NAME']
-DATE_CONSULT = db_settings['DATE_CONSULT']
-# Se cargan parámetros relacionados al servicio de email
-email_settings = config['email']
-SMTP_HOST = email_settings.get('SERVER')
-SMTP_PORT = email_settings.get('PORT')
-SMTP_USERNAME = email_settings.get('USERNAME')
-SMTP_PASSWORD = email_settings.get('PASSWORD')
-EMAIL_RECIPIENTS = email_settings.get('RECIPIENTS')
+load_dotenv('.env')
+
+ROOT_PATH = os.environ.get('PATH_CREATE_REPORT')
+ROOT_INPUT_PATH = os.environ.get('ROOT_INPUT_PATH')
+SERVER_NAME = os.environ.get('SERVER_NAME')
+DB_NAME = os.environ.get('DB_NAME')
+DB_USER = os.environ.get('USER')
+DB_PASSWORD = os.environ.get('PASSWORD')
+TABLE_NAME = os.environ.get('TABLE_NAME')
+DATE_CONSULT = os.environ.get('DATE_CONSULT')
+SMTP_HOST = os.environ.get('SERVER')
+SMTP_PORT = os.environ.get('PORT')
+SMTP_USERNAME = os.environ.get('SMTP_USERNAME')
+SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD')
+EMAIL_RECIPIENTS = os.environ.get('RECIPIENTS')
 # Subject of emails to get form mailbox
-SUBJECT = email_settings.get('SUBJECT')
+SUBJECT = os.environ.get('SUBJECT')
 CC = ''
 
 # Email message template
-with open(join(ROOT_PATH, email_settings.get('MESSAGE_FILE')), mode='r', encoding='utf8') as f:
+with open(join(ROOT_PATH, os.environ.get('MESSAGE_FILE')), mode='r', encoding='utf8') as f:
     MESSAGE = """"""
     for line in f.readlines():
         MESSAGE += line
@@ -85,7 +80,3 @@ if not exists(TEMPLATE_PATH):
     logging.info("Template 'Informe Consolidado Mensual.xlsx' not found.")
 else:
     copy(TEMPLATE_PATH, REPORT_PATH)
-
-
-if __name__ == '__main__':
-    config()

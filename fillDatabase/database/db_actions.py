@@ -30,24 +30,32 @@ def update_table(df):
             query_titles = ','.join(table_titles)
             query = f'INSERT INTO {TABLE_NAME} ({query_titles}) VALUES (?,?,?,?,?,?,?,?,?);'
             try:
-                for count_rows, row in df.iterrows():
-                    _placa, _programa, _tipo_motor, _distancia_total, _estado_informacion, _conductor, _conductor_celular_noOperativo, _celular_noOperativo = row.values
-                    _conductor = setting_name(_conductor)
-                    cursor.execute(
-                        query,
-                        _placa,
-                        _programa,
-                        _tipo_motor,
-                        _distancia_total,
-                        _estado_informacion,
-                        _conductor,
-                        _conductor_celular_noOperativo,
-                        _celular_noOperativo,
-                        DATE)
-                print(count_rows+1, 'rows updated successfully')
+                df.apply(lambda x: execute_query(x, cursor, query), axis=1, result_type='expand')
+                print(len(df), 'rows updated successfully')
                 conn.commit()
             except Exception as e:
                 print(e)
+
+def execute_query(series, cursor, query):
+    _placa = series.get('PLACA')
+    _programa = series.get('PROGRAMA')
+    _tipo_motor = series.get('TIPO MOTOR')
+    _distancia_total = series.get('DISTANCIA TOTAL [KM]')
+    _estado_informacion = series.get('ESTADO DE INFORMACIÓN')
+    _conductor_celular_noOperativo = series.get('VALIDACIÓN CONDUCTOR CON CELULAR NO OPERATIVO')
+    _celular_noOperativo = series.get('VALIDACIÓN CELULARES NO OPERATIVOS')
+    _conductor = setting_name(series.get('CONDUCTOR QUE REALIZÓ EL CHECKLIST'))
+    cursor.execute(
+                    query,
+                    _placa,
+                    _programa,
+                    _tipo_motor,
+                    _distancia_total,
+                    _estado_informacion,
+                    _conductor,
+                    _conductor_celular_noOperativo,
+                    _celular_noOperativo,
+                    DATE)
             
 # def delete_table():
 #     """
