@@ -6,13 +6,13 @@ Clone the repository in a your work folder.
 
 ### Create a virtual environment
 ```
-python -m venv .venv
+python -m venv venv
 ```
 ### Activate virtul environment
 
 #### Windows
 ```
-.venv\Scripts\activate
+venv\Scripts\activate
 ```
 #### Linux
 ```
